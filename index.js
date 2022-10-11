@@ -12,44 +12,41 @@ const currency = new Intl.NumberFormat("id-ID", {
 
 console.log('Hitung Biaya Ongkos')
 
-const tanya = () => {
+const app = () => {
 	cmd.question('Jarak tempuh: ', jarak => {
-		hitung(jarak)
+		let { fee, service } = calculate(jarak)
+
+		console.log('Total ongkos kirim = ' + currency.format(fee))
+		console.log('Biaya Layanan = ' + currency.format(service))
 	
 		cmd.question('Ulang(y/n): ', answer => {
 			if (answer.toLowerCase() == 'n') {
 				cmd.close()
 			} else {
-				tanya()
+				app()
 			}
 		})
 	})
 }
 
-tanya()
+app()
 
 cmd.on('close', () => {
 	console.log('Bye!')
 	process.exit(0)
 })
 
-const hitung = (jarak) => {
-	let ongkoskirim = 0
-	let biayalayanan = 0
-
-	if (jarak <= 2) {
-		let harga = 8000
-		ongkoskirim = harga
-		biayalayanan = 0.045 * ongkoskirim
-	} else {
-		let harga = 5000
-		ongkoskirim = 8000
-		for (let i=2; i<jarak; i++) {
-				ongkoskirim += harga
+const calculate = (distance) => {
+	if (distance <= 2) {
+		return {
+			fee: 8000,
+			service: 8000 * 0.045,
 		}
-		biayalayanan = 0.045 * ongkoskirim
+	} else {
+		let total = 8000 + ((distance-2) * 5000)
+		return {
+			fee: total,
+			service: total * 0.045
+		}
 	}
-
-	console.log('Total ongkos kirim = ' + currency.format(ongkoskirim))
-	console.log('Biaya Layanan = ' + currency.format(biayalayanan))
 }
